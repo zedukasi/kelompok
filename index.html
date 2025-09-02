@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Pembagian Kelompok Siswa</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <h2 class="text-center mb-4">Website Pembagian Kelompok Siswa</h2>
+
+    <!-- Upload File -->
+    <div class="mb-3">
+      <label for="fileInput" class="form-label">Upload Data Siswa (.txt)</label>
+      <input class="form-control" type="file" id="fileInput" accept=".txt">
+    </div>
+
+    <!-- Tombol Aksi -->
+<div class="d-flex gap-2 mb-4">
+  <input type="number" id="groupCount" class="form-control w-auto" min="2" value="3" placeholder="Jumlah Kelompok">
+  <button id="btnAuto" class="btn btn-primary">Bagi Otomatis</button>
+  <button id="btnReset" class="btn btn-danger">Reset Data</button>
+</div>
+
+
+    <!-- Daftar Siswa -->
+    <div class="row">
+      <div class="col-md-4">
+        <h5>Daftar Siswa</h5>
+        <ul id="studentList" class="list-group border p-2 min-vh-50"></ul>
+      </div>
+
+      <!-- Area Kelompok -->
+      <div class="col-md-8">
+        <h5>Kelompok</h5>
+        <div id="groupsContainer" class="d-flex gap-3 flex-wrap">
+          <!-- Kolom kelompok akan dibuat dinamis dengan JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
