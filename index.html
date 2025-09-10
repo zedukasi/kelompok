@@ -1,46 +1,466 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Pembagian Kelompok Siswa</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pembagian Kelompok Siswa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0 0 10px 10px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: none;
+        }
+        .card-header {
+            border-radius: 10px 10px 0 0 !important;
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .group-container {
+            min-height: 200px;
+            background-color: #f0f5ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .student-item {
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        .student-item:hover {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+        .student-number {
+            background-color: #6a11cb;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        .student-gender {
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 15px;
+            background-color: #e9ecef;
+        }
+        .gender-male {
+            background-color: #d1e7ff;
+            color: #0066cc;
+        }
+        .gender-female {
+            background-color: #ffd1dc;
+            color: #cc0066;
+        }
+        .group-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #6a11cb;
+        }
+        .drag-over {
+            background-color: #e6f7ff;
+            border: 2px dashed #2575fc;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a0db9 0%, #1c67e3 100%);
+        }
+        .instructions {
+            background-color: #f8f9fa;
+            border-left: 4px solid #6a11cb;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+            border-radius: 10px 10px 0 0;
+        }
+    </style>
 </head>
-<body class="bg-light">
-  <div class="container py-4">
-    <h2 class="text-center mb-4">Website Pembagian Kelompok Siswa</h2>
-
-    <!-- Upload File -->
-    <div class="mb-3">
-      <label for="fileInput" class="form-label">Upload Data Siswa (.txt)</label>
-      <input class="form-control" type="file" id="fileInput" accept=".txt">
-    </div>
-
-    <!-- Tombol Aksi -->
-<div class="d-flex gap-2 mb-4">
-  <input type="number" id="groupCount" class="form-control w-auto" min="2" value="3" placeholder="Jumlah Kelompok">
-  <button id="btnAuto" class="btn btn-primary">Bagi Otomatis</button>
-  <button id="btnReset" class="btn btn-danger">Reset Data</button>
-</div>
-
-
-    <!-- Daftar Siswa -->
-    <div class="row">
-      <div class="col-md-4">
-        <h5>Daftar Siswa</h5>
-        <ul id="studentList" class="list-group border p-2 min-vh-50"></ul>
-      </div>
-
-      <!-- Area Kelompok -->
-      <div class="col-md-8">
-        <h5>Kelompok</h5>
-        <div id="groupsContainer" class="d-flex gap-3 flex-wrap">
-          <!-- Kolom kelompok akan dibuat dinamis dengan JS -->
+<body>
+    <div class="header text-center">
+        <div class="container">
+            <h1><i class="fas fa-users me-2"></i>Pembagian Kelompok Siswa</h1>
+            <p class="lead">Alat bantu untuk membagi siswa ke dalam kelompok belajar</p>
         </div>
-      </div>
     </div>
-  </div>
 
-  <script src="script.js"></script>
+    <div class="container">
+        <div class="instructions">
+            <h5><i class="fas fa-info-circle me-2"></i>Cara Penggunaan:</h5>
+            <ol class="mb-0">
+                <li>Upload file teks berisi data siswa (format: nomor, nama, jenis kelamin)</li>
+                <li>Data siswa akan ditampilkan di bawah</li>
+                <li>Tentukan jumlah kelompok yang diinginkan</li>
+                <li>Klik "Bagi Kelompok" untuk pembagian otomatis</li>
+                <li>Atau drag and drop siswa secara manual ke kelompok yang diinginkan</li>
+            </ol>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <i class="fas fa-file-upload me-2"></i>Upload Data Siswa
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="fileInput" class="form-label">Pilih file .txt</label>
+                            <input class="form-control" type="file" id="fileInput" accept=".txt">
+                            <div class="form-text">Format file: setiap baris berisi nomor, nama, jenis kelamin (L/P) dipisahkan koma</div>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <button id="sampleDataBtn" class="btn btn-outline-primary">
+                                    <i class="fas fa-download me-1"></i>Gunakan Data Contoh
+                                </button>
+                            </div>
+                            <div>
+                                <button id="clearDataBtn" class="btn btn-outline-danger me-2">
+                                    <i class="fas fa-trash me-1"></i>Hapus Data
+                                </button>
+                                <button id="uploadBtn" class="btn btn-primary">
+                                    <i class="fas fa-upload me-1"></i>Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white">
+                        <i class="fas fa-list me-2"></i>Data Siswa
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="studentsTable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Nama</th>
+                                        <th scope="col">Jenis Kelamin</th>
+                                        <th scope="col">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Data siswa akan ditampilkan di sini -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-object-group me-2"></i>Pembagian Kelompok
+                        </div>
+                        <div class="d-flex">
+                            <input type="number" class="form-control me-2" id="groupCount" min="2" max="10" value="3" style="width: 100px;">
+                            <button id="autoGroupBtn" class="btn btn-primary">
+                                <i class="fas fa-cogs me-1"></i>Bagi Kelompok
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="groupsContainer">
+                            <!-- Kelompok akan ditampilkan di sini -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-4">
+        <div class="container">
+            <p>Website Pembagian Kelompok Siswa &copy; 2023</p>
+            <p class="small">Dibuat dengan HTML, CSS, JavaScript, dan Bootstrap</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data contoh
+            const sampleData = `1, Ahmad Sutisna, L
+2, Siti Rahayu, P
+3, Budi Santoso, L
+4, Dewi Anggraini, P
+5, Joko Widodo, L
+6, Maya Sari, P
+7, Rudi Hermawan, L
+8, Intan Permata, P
+9, Hendra Gunawan, L
+10, Rina Wati, P
+11, Agus Supriyadi, L
+12, Desi Ratnasari, P
+13, Fajar Setiawan, L
+14, Lina Marlina, P
+15, Irwan Kurniawan, L`;
+
+            // Elemen DOM
+            const fileInput = document.getElementById('fileInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const sampleDataBtn = document.getElementById('sampleDataBtn');
+            const clearDataBtn = document.getElementById('clearDataBtn');
+            const studentsTable = document.getElementById('studentsTable');
+            const groupCount = document.getElementById('groupCount');
+            const autoGroupBtn = document.getElementById('autoGroupBtn');
+            const groupsContainer = document.getElementById('groupsContainer');
+
+            let students = [];
+
+            // Fungsi untuk memproses data dari file
+            function processData(content) {
+                const lines = content.split('\n');
+                students = [];
+                
+                lines.forEach(line => {
+                    if (line.trim() !== '') {
+                        const parts = line.split(',');
+                        if (parts.length >= 3) {
+                            const number = parts[0].trim();
+                            const name = parts[1].trim();
+                            const gender = parts[2].trim().toUpperCase();
+                            
+                            if (number && name && (gender === 'L' || gender === 'P')) {
+                                students.push({
+                                    number: number,
+                                    name: name,
+                                    gender: gender
+                                });
+                            }
+                        }
+                    }
+                });
+                
+                renderStudentsTable();
+            }
+
+            // Fungsi untuk merender tabel siswa
+            function renderStudentsTable() {
+                const tbody = studentsTable.querySelector('tbody');
+                tbody.innerHTML = '';
+                
+                students.forEach((student, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <th scope="row">${student.number}</th>
+                        <td>${student.name}</td>
+                        <td><span class="student-gender ${student.gender === 'L' ? 'gender-male' : 'gender-female'}">${student.gender === 'L' ? 'Laki-laki' : 'Perempuan'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-danger remove-btn" data-index="${index}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                
+                // Tambahkan event listener untuk tombol hapus
+                document.querySelectorAll('.remove-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        students.splice(index, 1);
+                        renderStudentsTable();
+                    });
+                });
+            }
+
+            // Fungsi untuk membagi kelompok secara otomatis
+            function autoGroupStudents() {
+                const count = parseInt(groupCount.value);
+                if (isNaN(count) || count < 2) {
+                    alert('Jumlah kelompok harus minimal 2');
+                    return;
+                }
+                
+                // Acak urutan siswa
+                const shuffled = [...students].sort(() => 0.5 - Math.random());
+                
+                // Inisialisasi kelompok
+                const groups = Array.from({ length: count }, () => []);
+                
+                // Distribusikan siswa ke kelompok
+                shuffled.forEach((student, index) => {
+                    groups[index % count].push(student);
+                });
+                
+                renderGroups(groups);
+            }
+
+            // Fungsi untuk merender kelompok
+            function renderGroups(groups) {
+                groupsContainer.innerHTML = '';
+                
+                groups.forEach((group, index) => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-4';
+                    col.innerHTML = `
+                        <div class="group-header">Kelompok ${index + 1} (${group.length} orang)</div>
+                        <div class="group-container" data-group="${index}" id="group-${index}">
+                            ${group.map(student => `
+                                <div class="student-item" draggable="true" data-number="${student.number}">
+                                    <div class="student-number">${student.number}</div>
+                                    <div>${student.name}</div>
+                                    <span class="student-gender ${student.gender === 'L' ? 'gender-male' : 'gender-female'}">${student.gender === 'L' ? 'L' : 'P'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    groupsContainer.appendChild(col);
+                });
+                
+                setupDragAndDrop();
+            }
+
+            // Fungsi untuk mengatur drag and drop
+            function setupDragAndDrop() {
+                const studentItems = document.querySelectorAll('.student-item');
+                const groupContainers = document.querySelectorAll('.group-container');
+                
+                let draggedItem = null;
+                
+                studentItems.forEach(item => {
+                    item.addEventListener('dragstart', function() {
+                        draggedItem = this;
+                        setTimeout(() => this.style.opacity = '0.5', 0);
+                    });
+                    
+                    item.addEventListener('dragend', function() {
+                        draggedItem = null;
+                        this.style.opacity = '1';
+                    });
+                });
+                
+                groupContainers.forEach(container => {
+                    container.addEventListener('dragover', function(e) {
+                        e.preventDefault();
+                        this.classList.add('drag-over');
+                    });
+                    
+                    container.addEventListener('dragleave', function() {
+                        this.classList.remove('drag-over');
+                    });
+                    
+                    container.addEventListener('drop', function(e) {
+                        e.preventDefault();
+                        this.classList.remove('drag-over');
+                        
+                        if (draggedItem) {
+                            this.appendChild(draggedItem);
+                            
+                            // Perbarui header kelompok
+                            updateGroupHeaders();
+                        }
+                    });
+                });
+            }
+
+            // Fungsi untuk memperbarui header kelompok
+            function updateGroupHeaders() {
+                const groupContainers = document.querySelectorAll('.group-container');
+                
+                groupContainers.forEach((container, index) => {
+                    const groupId = container.getAttribute('data-group');
+                    const header = container.previousElementSibling;
+                    const studentCount = container.querySelectorAll('.student-item').length;
+                    
+                    header.textContent = `Kelompok ${parseInt(groupId) + 1} (${studentCount} orang)`;
+                });
+            }
+
+            // Event listeners
+            uploadBtn.addEventListener('click', function() {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        processData(e.target.result);
+                    };
+                    
+                    reader.readAsText(file);
+                } else {
+                    alert('Silakan pilih file terlebih dahulu');
+                }
+            });
+
+            sampleDataBtn.addEventListener('click', function() {
+                processData(sampleData);
+            });
+
+            clearDataBtn.addEventListener('click', function() {
+                students = [];
+                renderStudentsTable();
+                groupsContainer.innerHTML = '';
+            });
+
+            autoGroupBtn.addEventListener('click', autoGroupStudents);
+
+            // Inisialisasi drag and drop untuk elemen yang akan dibuat nanti
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.classList.contains('student-item')) {
+                    e.dataTransfer.setData('text/plain', e.target.getAttribute('data-number'));
+                }
+            });
+
+            // Responsif untuk perangkat mobile
+            function handleMobileView() {
+                if (window.innerWidth < 768) {
+                    groupsContainer.classList.remove('row-cols-md-3');
+                    groupsContainer.classList.add('row-cols-1');
+                } else {
+                    groupsContainer.classList.remove('row-cols-1');
+                    groupsContainer.classList.add('row-cols-md-3');
+                }
+            }
+
+            window.addEventListener('resize', handleMobileView);
+            handleMobileView();
+        });
+    </script>
 </body>
 </html>
